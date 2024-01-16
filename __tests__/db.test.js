@@ -83,5 +83,14 @@ describe('app', () => {
         expect(res.body.msg).toBe('Bad request');
       })
     })
+    test('providing an invalid id - responds with a 400 when testing with a different data type', () => {
+      return request(app)
+      .get('/api/articles/hello')
+      .expect(400)
+      .then((res) => {
+        expect(res.body).toEqual({ status: 400, msg: 'Bad request'});
+        expect(res.body.msg).toBe('Bad request');
+      })
+    })
   })
 })
