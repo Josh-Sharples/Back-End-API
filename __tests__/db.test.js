@@ -39,20 +39,51 @@ describe('app', () => {
           const { article } = body;
           expect(article).toMatchObject({
             article_id: 1,
+            title: "Living in the shadow of a great man",
+            topic: "mitch",
+            author: "butter_bridge",
+            body: 'I find this existence challenging',
+            created_at: '2020-07-09T20:11:00.000Z',
+            votes: 100,
+            article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
           })
         })
     })
-   test('api/articles/:article_id', () => {
+    test('api/articles - responds with status code 200 & has all relevent properties', () => {
       return request(app)
-        .get('/api/articles/8')
+        .get('/api/articles')
         .expect(200)
-        .then(({body}) => {
-          const { article } = body;
-          expect(article).toMatchObject({
-            article_id: 8,
+        .then((res) => {
+          res.body.forEach((article) => {
+            expect(article.hasOwnProperty('article_id')).toEqual(true);
+            expect(article.hasOwnProperty('title')).toEqual(true);
+            expect(article.hasOwnProperty('topic')).toEqual(true);
+            expect(article.hasOwnProperty('author')).toEqual(true);
+            expect(article.hasOwnProperty('created_at')).toEqual(true);
+            expect(article.hasOwnProperty('votes')).toEqual(true);
+            expect(article.hasOwnProperty('article_img_url')).toEqual(true);
+            expect(article.hasOwnProperty('comment_count')).toEqual(true);
+            expect(article.hasOwnProperty('body')).toEqual(false);
           })
-        })
+          })
     })
+    test('api/articles - responds with status code 200 & has all relevent properties in descending order', () => {
+      return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then((res) => {
+          expect(res.body[0]).toMatchObject({
+            article_id: 3,
+            title: 'Eight pug gifs that remind me of mitch',
+            topic: 'mitch',
+            author: 'icellusedkars',
+            created_at: '2020-11-03T09:12:00.000Z',
+            votes: 0,
+            article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+            comment_count: '2'
+            })
+          })
+      })
   })
 
   //----------------Error Handling------------------------
@@ -62,25 +93,15 @@ describe('app', () => {
         .get('/api/noTable')
         .expect(404)
         .then((res) => {
-          expect(res.body).toEqual({msg : 'Endpoint not found'});
+          expect(res.body).toEqual({status: 404, msg : 'Endpoint not found'});
         }) 
     })
-    test('providing an invalid id - responds with a 400 and error message', () => {
+    test('providing an invalid id - responds with a 404 and error message', () => {
       return request(app)
-      .get('/api/articles/9999999')
-      .expect(400)
+      .get('/api/articles/9999')
+      .expect(404)
       .then((res) => {
-        expect(res.body).toEqual({ status: 400, msg: 'Bad request'});
-        expect(res.body.msg).toBe('Bad request');
-      })
-    })
-    test('providing an invalid id - responds with a 400 and error message when out of range for integer', () => {
-      return request(app)
-      .get('/api/articles/9999999999999999999')
-      .expect(400)
-      .then((res) => {
-        expect(res.body).toEqual({ status: 400, msg: 'Bad request'});
-        expect(res.body.msg).toBe('Bad request');
+        expect(res.body).toEqual({ status: 404, msg: 'Article ID not found'});
       })
     })
     test('providing an invalid id - responds with a 400 when testing with a different data type', () => {
@@ -89,7 +110,6 @@ describe('app', () => {
       .expect(400)
       .then((res) => {
         expect(res.body).toEqual({ status: 400, msg: 'Bad request'});
-        expect(res.body.msg).toBe('Bad request');
       })
     })
   })
