@@ -31,6 +31,28 @@ describe('app', () => {
           expect(res.body).toEqual(allEndpoints)
         })
     })
+    test('api/articles/:article_id', () => {
+      return request(app)
+        .get('/api/articles/1')
+        .expect(200)
+        .then(({body}) => {
+          const { article } = body;
+          expect(article).toMatchObject({
+            article_id: 1,
+          })
+        })
+    })
+   test('api/articles/:article_id', () => {
+      return request(app)
+        .get('/api/articles/8')
+        .expect(200)
+        .then(({body}) => {
+          const { article } = body;
+          expect(article).toMatchObject({
+            article_id: 8,
+          })
+        })
+    })
   })
 
   //----------------Error Handling------------------------
@@ -42,6 +64,24 @@ describe('app', () => {
         .then((res) => {
           expect(res.body).toEqual({msg : 'Endpoint not found'});
         }) 
+    })
+    test('providing an invalid id - responds with a 400 and error message', () => {
+      return request(app)
+      .get('/api/articles/9999999')
+      .expect(400)
+      .then((res) => {
+        expect(res.body).toEqual({ status: 400, msg: 'Bad request'});
+        expect(res.body.msg).toBe('Bad request');
+      })
+    })
+    test('providing an invalid id - responds with a 400 and error message when out of range for integer', () => {
+      return request(app)
+      .get('/api/articles/9999999999999999999')
+      .expect(400)
+      .then((res) => {
+        expect(res.body).toEqual({ status: 400, msg: 'Bad request'});
+        expect(res.body.msg).toBe('Bad request');
+      })
     })
   })
 })
