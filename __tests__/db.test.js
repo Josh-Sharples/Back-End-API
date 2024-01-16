@@ -3,6 +3,7 @@ const app = require('../db/app');
 const db = require('../db/connection');
 const seed = require('../db/seeds/seed');
 const testData = require('../db/data/test-data');
+const allEndpoints = require('../endpoints.json');
 
 afterAll(() => db.end());
 
@@ -20,6 +21,14 @@ describe('app', () => {
             expect(typeof topic.slug).toBe('string');
             expect(typeof topic.description).toBe('string')
           })
+        })
+    })
+    test('get /api - responds with 200 and all possible api endpoints', () => {
+      return request(app)
+        .get('/api')
+        .expect(200)
+        .then((res) => {
+          expect(res.body).toEqual(allEndpoints)
         })
     })
   })
