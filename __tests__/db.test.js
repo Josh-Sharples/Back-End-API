@@ -102,6 +102,24 @@ describe('app', () => {
             expect(body).toEqual([])
           }) 
         })
+        test('POST - api/articles/:article_id/comments - responds with 201 and comment object has been posted to comments array under the correct article_id', () => {
+          const commentToAdd = {
+            username: 'butter_bridge',
+            body: "I haven't posted in a while!"
+          };
+          return request(app)
+          .post('/api/articles/3/comments')
+          .send(commentToAdd)
+          .expect(201)
+          .then((res) => {
+           expect(res.body.comment).toMatchObject({
+              comment_id: 19,
+              body: "I haven't posted in a while!",
+              article_id: 3,
+              author: 'butter_bridge'
+           })
+          })
+        })
   })
 
   //----------------Error Handling------------------------
@@ -128,6 +146,39 @@ describe('app', () => {
       .expect(400)
       .then((res) => {
         expect(res.body).toEqual({ status: 400, msg: 'Bad request'});
+      })
+    })
+    test('not providing an id - responds with a 400', () => {
+      return request(app)
+      .get('/api/articles/comments')
+      .expect(400)
+      .then((res) => {
+        expect(res.body).toEqual({status: 400, msg : 'Bad request'});
+      })
+    })
+    test('providing a valid id but id not found - responds with a 404', () => {
+      const commentToAdd = {
+        username: 'butter_bridge',
+        body: "I haven't posted in a while!"
+      };
+      return request(app)
+      .post('/api/articles/9999/comments')
+      .send(commentToAdd)
+      .expect(404)
+      .then((res) => {
+        expect(res.body).toEqual({status: 404, msg: 'Article ID not found'});
+      })
+    })
+    test('providing an object to post with missing values', () => {
+      const commentToAdd = {
+        body: "I haven't posted in a while!"
+      };
+      return request(app)
+      .post('/api/articles/3/comments')
+      .send(commentToAdd)
+      .expect(400)
+      .then((res) => {
+        expect(res.body).toEqual({status: 400, msg : 'Bad request'});
       })
     })
   })
