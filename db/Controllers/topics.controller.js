@@ -3,6 +3,7 @@ const {
   selectArticleById, 
   selectAllArticles,
   selectCommentsFromArticleId,
+  insertCommentForArticleId
   } = require('../Models/topics.model')
 const allEndpoints = require('../../endpoints.json')
 
@@ -29,13 +30,30 @@ exports.getArticleById = (req, res, next) => {
 exports.getAllArticles = (req, res, next) => {
   selectAllArticles().then((articles) => {
     res.status(200).send(articles)
+  }).catch((err) => {
+    next(err)
   })
 }
 
 exports.getCommentsForArticleId = (req, res, next) => {
   const { article_id } = req.params
-  
+
   selectCommentsFromArticleId(article_id).then((comments) => {
     res.status(200).send(comments)
+  }).catch((err) => {
+    next(err)
+  })
+}
+
+exports.postCommentForArticleId = (req, res, next) => {
+  const {username, body} = req.body
+  const article_id = req.params.article_id
+
+  insertCommentForArticleId(username, body, article_id)
+  .then((comment) => {
+    res.status(201).send({ comment })
+  })
+  .catch((err) => {
+    next(err)
   })
 }
