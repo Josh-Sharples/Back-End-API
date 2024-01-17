@@ -19,16 +19,27 @@ exports.selectArticleById = (article_id) => {
 }
 
 exports.selectAllArticles = () => {
-  return db.query('SELECT * FROM articles ORDER BY created_at DESC')
-    .then(({ rows: articles }) => {
-      const promises = articles.map(article => {
-        return db.query('SELECT COUNT(*) FROM comments WHERE article_id = $1', [article.article_id])
-          .then(({ rows: [{ count }] }) => {
-            article.comment_count = count
-            delete article.body
-            return article
-          })
-      })
-      return Promise.all(promises);
+  return db.query(`
+    SELECT articles.*, COUNT(comments.comment_id) AS comment_count
+    FROM articles
+    LEFT JOIN comments ON articles.article_id = comments.article_id
+    GROUP BY articles.article_id
+    ORDER BY articles.created_at DESC;`)
+    .then(({ rows }) => {
+      rows.forEach(article => {
+        delete article.body;
+      });
+      return rows;
+    });
+}
+
+exports.selectCommentsFromArticleId = (article_id) => {
+  return db.query(`
+    SELECT * FROM comments 
+    WHERE comments.article_id = $1
+    ORDER BY created_at DESC;
+    `, [article_id])
+    .then(({rows}) => {
+      return rows
     })
-};
+}

@@ -5,6 +5,7 @@ const seed = require('../db/seeds/seed');
 const testData = require('../db/data/test-data');
 const allEndpoints = require('../endpoints.json');
 
+
 afterAll(() => db.end());
 
 beforeEach(() => seed(testData));
@@ -54,6 +55,7 @@ describe('app', () => {
         .get('/api/articles')
         .expect(200)
         .then((res) => {
+          expect(res.body.length).toBe(13);
           res.body.forEach((article) => {
             expect(article.hasOwnProperty('article_id')).toEqual(true);
             expect(article.hasOwnProperty('title')).toEqual(true);
@@ -72,18 +74,34 @@ describe('app', () => {
         .get('/api/articles')
         .expect(200)
         .then((res) => {
-          expect(res.body[0]).toMatchObject({
-            article_id: 3,
-            title: 'Eight pug gifs that remind me of mitch',
-            topic: 'mitch',
-            author: 'icellusedkars',
-            created_at: '2020-11-03T09:12:00.000Z',
-            votes: 0,
-            article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
-            comment_count: '2'
-            })
+         expect(res.body).toBeSortedBy('created_at', {descending: true})
           })
       })
+      test('api/articles/:article_id/comments - responds with status code 200 & all comments for relevant article_id with most recent comments first', () => {
+        return request(app)
+          .get('/api/articles/1/comments')
+          .expect(200)
+          .then(({body}) => {
+            expect(body.length).toBe(11);
+            expect(body[0]).toEqual({
+              comment_id: 5,
+              body: 'I hate streaming noses',
+              article_id: 1,
+              author: 'icellusedkars',
+              votes: 0,
+              created_at: '2020-11-03T21:00:00.000Z',
+            })
+            expect(body).toBeSortedBy('created_at', {descending: true});
+          })
+        })
+        test('api/articles/:article_id/comments - responds with 200 & returns empty array for correct id but has no comments', () => {
+          return request(app)
+          .get('/api/articles/2/comments')
+          .expect(200)
+          .then(({body}) => {
+            expect(body).toEqual([])
+          }) 
+        })
   })
 
   //----------------Error Handling------------------------
