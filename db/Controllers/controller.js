@@ -59,9 +59,6 @@ exports.postCommentForArticleId = (req, res, next) => {
     res.status(201).send({ comment })
   })
   .catch((err) => {
-    if (err.code === '23503') {
-      res.status(404).send({status: 404, msg: 'ID not found'})
-    }
     next(err)
   })
 }

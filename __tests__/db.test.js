@@ -55,6 +55,7 @@ describe('App.js', () => {
         .get('/api/articles')
         .expect(200)
         .then((res) => {
+          expect(res.body[0].comment_count).toEqual('2')
           expect(res.body.length).toBe(13);
           res.body.forEach((article) => {
             expect(article.hasOwnProperty('article_id')).toEqual(true);
@@ -231,13 +232,14 @@ describe('App.js', () => {
           .get('/api/articles?topic=cats')
           .expect(200)
           .then((res) => {
+          expect(res.body.length).toEqual(1)
           res.body.forEach((article) => {
             expect(article.topic).toBe('cats')
             expect(res.body).toBeSortedBy('created_at', {descending: true})
           })
           })
         })
-        test('GET - /api/articles?topic - should return status 200 when topic is left blank - default to ', () => {
+        test('GET - /api/articles?topic - should return status 200 when topic is left blank - default to no topic', () => {
           return request(app)
           .get('/api/articles?topic=')
           .expect(200)
@@ -254,6 +256,23 @@ describe('App.js', () => {
               expect(article.hasOwnProperty('comment_count')).toEqual(true);
               expect(article.hasOwnProperty('body')).toEqual(false);
             })
+          })
+        })
+        test('GET - /api/articles?topic - check if topic is valid but there are no articles associated with it', () => {
+          return request(app)
+          .get('/api/articles?topic=paper')
+          .expect(200)
+          .then((res) => {
+            expect(res.body).toEqual([])
+          })
+        })
+        test('GET - /api/articles/:article_id - check if comment_count contains the total number of comments for specified article_id', () => {
+          return request(app)
+          .get('/api/articles/1')
+          .expect(200)
+          .then((res) => {
+            expect(res.body.article.hasOwnProperty('comment_count')).toEqual(true);
+            expect(res.body.article.comment_count).toEqual('11');
           })
         })
   })
