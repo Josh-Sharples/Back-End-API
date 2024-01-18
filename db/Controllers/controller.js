@@ -69,7 +69,6 @@ exports.patchArticleById = (req, res, next) => {
     res.status(200).send({ updatedVote })
   })
   .catch((err) => {
-    console.log(err)
     next(err)
   })
 }
