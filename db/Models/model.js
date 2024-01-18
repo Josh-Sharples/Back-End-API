@@ -66,9 +66,28 @@ exports.updateArticleVotes = (updatedVotes) => {
     RETURNING *
   `, [inc_votes, article_id])
   .then(({rows}) => {
+    if (rows.length === 0) {
+      return Promise.reject({status: 404, msg : 'ID not found'})
+    }
     if (rows[0].votes <= 0) {
       rows[0].votes = 0
     }
     return rows[0]
+  })
+}
+
+exports.deleteCommentById = (comment_id) => {
+  return db.query(`
+    DELETE FROM comments
+    WHERE
+    comment_id = $1
+    RETURNING *
+  `, [comment_id]
+  )
+  .then(({rows}) => {
+    if (rows.length === 0) {
+      return Promise.reject({status: 404, msg : 'ID not found'})
+     }
+     return rows[0]
   })
 }

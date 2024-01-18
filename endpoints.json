@@ -45,7 +45,7 @@
   },
   "GET /api/articles/:article_id/comments": {
     "description": "serves an array of comments from specified article_id - default order set: most recent comment first",
-    "queries": ["author_id"],
+    "queries": ["article_id"],
     "exampleResponse": {
       "comments": [
         {
@@ -61,7 +61,7 @@
   },
   "POST /api/articles/:article_id/comments": {
     "description": "Posts a comment under the specified Id - return comment object",
-    "queries": ["author_id"],
+    "queries": ["article_id"],
     "exampleInput": {
       "username": "butter_bridge",
       "body": "I haven't posted in a while!"
@@ -79,8 +79,8 @@
     }
   },
   "PATCH /api/articles/:article_id": {
-    "description": "Patches the article votes under the specified Id - return article object with updated votes value",
-    "queries": ["author_id"],
+    "description": "Patches the article votes under the specified ID - return article object with updated votes value",
+    "queries": ["article_id"],
     "exampleInput": {
       "inc_votes": -15
     },
@@ -95,5 +95,9 @@
         "votes": 85
       }
     }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "Deletes comment with specified ID - return 204 if sucessfully deleted",
+    "queries": ["comment_id"]
   }
 }

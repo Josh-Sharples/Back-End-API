@@ -4,8 +4,9 @@ const {
   selectAllArticles,
   selectCommentsFromArticleId,
   insertCommentForArticleId,
-  updateArticleVotes
-  } = require('../Models/topics.model')
+  updateArticleVotes,
+  deleteCommentById
+  } = require('../Models/model')
 const allEndpoints = require('../../endpoints.json')
 
 exports.getTopics = (req, res, next) => {
@@ -47,7 +48,7 @@ exports.getCommentsForArticleId = (req, res, next) => {
 }
 
 exports.postCommentForArticleId = (req, res, next) => {
-  const {username, body} = req.body
+  const { username, body } = req.body
   const article_id = req.params.article_id
 
   insertCommentForArticleId(username, body, article_id)
@@ -61,11 +62,23 @@ exports.postCommentForArticleId = (req, res, next) => {
 
 exports.patchArticleById = (req, res, next) => {
   const newArticleVotes = req.body;
-  const {article_id} = req.params;
+  const { article_id } = req.params;
   newArticleVotes.article_id = +article_id
 
   updateArticleVotes(newArticleVotes).then((updatedVote) => {
     res.status(200).send({ updatedVote })
+  })
+  .catch((err) => {
+    console.log(err)
+    next(err)
+  })
+}
+
+exports.deleteComment = (req, res, next) => {
+  const { comment_id } = req.params
+
+  deleteCommentById(comment_id).then((deletedComment) => {
+    res.status(204).send()
   })
   .catch((err) => {
     next(err)
