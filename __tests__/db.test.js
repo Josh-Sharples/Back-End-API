@@ -120,6 +120,86 @@ describe('app', () => {
            })
           })
         })
+        test('POST - api/articles/:article_id/comments - checks that extra inputs are ignored', () => {
+          const commentToAdd = {
+            username: 'butter_bridge',
+            body: "I haven't posted in a while!",
+            extraProperty: 'extraProperty'
+          };
+          return request(app)
+          .post('/api/articles/3/comments')
+          .send(commentToAdd)
+          .expect(201)
+          .then((res) => {
+           expect(res.body.comment.hasOwnProperty('extraProperty')).toBe(false)
+           })
+        })
+        test('PATCH - api/articles/:article_id - responds with 200 & updated votes property', () => {
+          return request(app)
+          .patch('/api/articles/1')
+          .send({
+            inc_votes: 15
+          })
+          .expect(200)
+          .then((res) => {
+            expect(res.body.updatedVote).toMatchObject({
+              article_id: 1,
+              title: 'Living in the shadow of a great man',
+              topic: 'mitch',
+              author: 'butter_bridge',
+              body: 'I find this existence challenging',
+              votes: 115,
+            })
+          })
+        })
+        test('PATCH - api/articles/:article_id - responds with 200 & updated votes property for minus votes', () => {
+          return request(app)
+          .patch('/api/articles/1')
+          .send({
+            inc_votes: -15
+          })
+          .expect(200)
+          .then((res) => {
+            expect(res.body.updatedVote).toMatchObject({
+              article_id: 1,
+              title: 'Living in the shadow of a great man',
+              topic: 'mitch',
+              author: 'butter_bridge',
+              body: 'I find this existence challenging',
+              votes: 85,
+            })
+          })
+        })
+        test('PATCH - api/articles/:article_id - responds with 200 & updated votes property for minus votes when current vote is 0', () => {
+          return request(app)
+          .patch('/api/articles/4')
+          .send({
+            inc_votes: -15
+          })
+          .expect(200)
+          .then((res) => {
+            expect(res.body.updatedVote).toMatchObject({
+              article_id: 4,
+              title: 'Student SUES Mitch!',
+              topic: 'mitch',
+              author: 'rogersop',
+              body: 'We all love Mitch and his wonderful, unique typing style. However, the volume of his typing has ALLEGEDLY burst another students eardrums, and they are now suing for damages',
+              votes: 0,
+            })
+          })
+        })
+        test('PATCH - api/articles/:article_id - check it ignores other properties', () => {
+          return request(app)
+          .patch('/api/articles/4')
+          .send({
+            inc_votes: -15,
+            extraProperty: 'extraProperty'
+          })
+          .expect(200)
+          .then((res) => {
+            expect(res.body.updatedVote.hasOwnProperty('extraProperty')).toBe(false)
+          })
+        })
   })
 
   //----------------Error Handling------------------------
@@ -179,6 +259,17 @@ describe('app', () => {
       .expect(400)
       .then((res) => {
         expect(res.body).toEqual({status: 400, msg : 'Bad request'});
+      })
+    })
+    test('PATCH - api/articles/:article_id - responds with 200 & updated votes property', () => {
+      return request(app)
+      .patch('/api/articles/1')
+      .send({
+        inc_votes: 'hello'
+      })
+      .expect(400)
+      .then((res) => {
+        expect(res.body).toEqual({ status: 400, msg: 'Bad request'});
       })
     })
   })

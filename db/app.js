@@ -6,7 +6,8 @@ const {
   getArticleById, 
   getAllArticles, 
   getCommentsForArticleId,
-  postCommentForArticleId
+  postCommentForArticleId,
+  patchArticleById
 } = require('./Controllers/topics.controller')
 
 app.use(express.json())
@@ -24,6 +25,8 @@ app.get('/api/articles', getAllArticles);
 app.get('/api/articles/:article_id/comments', getCommentsForArticleId);
 
 app.post('/api/articles/:article_id/comments', postCommentForArticleId);
+
+app.patch('/api/articles/:article_id', patchArticleById)
 
 
 //----------------Error Handling------------------------
