@@ -62,6 +62,10 @@
   "POST /api/articles/:article_id/comments": {
     "description": "Posts a comment under the specified Id - return comment object",
     "queries": ["author_id"],
+    "exampleInput": {
+      "username": "butter_bridge",
+      "body": "I haven't posted in a while!"
+    },
     "exampleResponse": {
       "comment":
         {
@@ -72,6 +76,24 @@
           "votes": 0,
           "created_at": "2020-11-03T21:00:00.000Z"
         }
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "Patches the article votes under the specified Id - return article object with updated votes value",
+    "queries": ["author_id"],
+    "exampleInput": {
+      "inc_votes": -15
+    },
+    "exampleResponse": {
+      "article":
+      {
+        "article_id": 1,
+        "title": "Living in the shadow of a great man",
+        "topic": "mitch",
+        "author": "butter_bridge",
+        "body": "I find this existence challenging",
+        "votes": 85
+      }
     }
   }
 }

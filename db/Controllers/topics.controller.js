@@ -3,7 +3,8 @@ const {
   selectArticleById, 
   selectAllArticles,
   selectCommentsFromArticleId,
-  insertCommentForArticleId
+  insertCommentForArticleId,
+  updateArticleVotes
   } = require('../Models/topics.model')
 const allEndpoints = require('../../endpoints.json')
 
@@ -52,6 +53,19 @@ exports.postCommentForArticleId = (req, res, next) => {
   insertCommentForArticleId(username, body, article_id)
   .then((comment) => {
     res.status(201).send({ comment })
+  })
+  .catch((err) => {
+    next(err)
+  })
+}
+
+exports.patchArticleById = (req, res, next) => {
+  const newArticleVotes = req.body;
+  const {article_id} = req.params;
+  newArticleVotes.article_id = +article_id
+
+  updateArticleVotes(newArticleVotes).then((updatedVote) => {
+    res.status(200).send({ updatedVote })
   })
   .catch((err) => {
     next(err)
