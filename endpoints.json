@@ -10,7 +10,7 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all article - default order set: descending by date of creation",
+    "description": "serves an array of all articles - default order set: descending by date of creation",
     "queries": ["author", "topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
