@@ -10,8 +10,8 @@ afterAll(() => db.end());
 
 beforeEach(() => seed(testData));
 
-describe('app', () => {
-  describe('topics', () => {
+describe('App.js', () => {
+  describe('App Endpoints', () => {
     test('api/topics - responds with all topics and 200 status code', () => {
       return request(app)
         .get('/api/topics')
@@ -170,7 +170,7 @@ describe('app', () => {
             })
           })
         })
-        test('PATCH - api/articles/:article_id - responds with 200 & updated votes property for minus votes when current vote is 0', () => {
+        test('PATCH - api/articles/:article_id - responds with 200 & checks that votes will not go into negative figures', () => {
           return request(app)
           .patch('/api/articles/4')
           .send({
@@ -190,7 +190,7 @@ describe('app', () => {
         })
         test('PATCH - api/articles/:article_id - check it ignores other properties', () => {
           return request(app)
-          .patch('/api/articles/4')
+          .patch('/api/articles/1')
           .send({
             inc_votes: -15,
             extraProperty: 'extraProperty'
@@ -198,12 +198,26 @@ describe('app', () => {
           .expect(200)
           .then((res) => {
             expect(res.body.updatedVote.hasOwnProperty('extraProperty')).toBe(false)
+            expect(res.body.updatedVote).toMatchObject({
+              article_id: 1,
+              title: 'Living in the shadow of a great man',
+              topic: 'mitch',
+              author: 'butter_bridge',
+              body: 'I find this existence challenging',
+              votes: 85,
+            })
           })
+        })
+        test('DELETE - /api/comments/:comment_id - responds with 204 - deletes comment using comment_id', () => {
+          return request(app)
+          .delete('/api/comments/1')
+          .expect(204)
         })
   })
 
+
   //----------------Error Handling------------------------
-  describe('general error handling', () => {
+  describe('Error Handling', () => {
     test('API erros testing for incorrect file path', () => {
       return request(app)
         .get('/api/noTable')
@@ -217,7 +231,7 @@ describe('app', () => {
       .get('/api/articles/9999')
       .expect(404)
       .then((res) => {
-        expect(res.body).toEqual({ status: 404, msg: 'Article ID not found'});
+        expect(res.body).toEqual({ status: 404, msg: 'ID not found'});
       })
     })
     test('providing an invalid id - responds with a 400 when testing with a different data type', () => {
@@ -242,11 +256,11 @@ describe('app', () => {
         body: "I haven't posted in a while!"
       };
       return request(app)
-      .post('/api/articles/9999/comments')
+      .post('/api/articles/999/comments')
       .send(commentToAdd)
       .expect(404)
       .then((res) => {
-        expect(res.body).toEqual({status: 404, msg: 'Article ID not found'});
+        expect(res.body).toEqual({status: 404, msg: 'ID not found'});
       })
     })
     test('providing an object to post with missing values', () => {
@@ -261,12 +275,50 @@ describe('app', () => {
         expect(res.body).toEqual({status: 400, msg : 'Bad request'});
       })
     })
-    test('PATCH - api/articles/:article_id - responds with 200 & updated votes property', () => {
+    test('PATCH - api/articles/:article_id - responds with 400 when proprty value is of another data type', () => {
       return request(app)
       .patch('/api/articles/1')
       .send({
         inc_votes: 'hello'
       })
+      .expect(400)
+      .then((res) => {
+        expect(res.body).toEqual({ status: 400, msg: 'Bad request'});
+      })
+    })
+    test('PATCH - api/articles/:article_id - responds with 400 when article_id is an invalid data type', () => {
+      return request(app)
+      .patch('/api/articles/hello')
+      .send({
+        inc_votes: 15
+      })
+      .expect(400)
+      .then((res) => {
+        expect(res.body).toEqual({ status: 400, msg: 'Bad request'});
+      })
+    })
+    test('PATCH - api/articles/:article_id - responds with 404 when article_id is valid but not found', () => {
+      return request(app)
+      .patch('/api/articles/74')
+      .send({
+        inc_votes: 15
+      })
+      .expect(404)
+      .then((res) => {
+        expect(res.body).toEqual({ status: 404, msg: 'ID not found'});
+      })
+    })
+    test('DELETE - /api/comments/:comment_id - check it return error when presented a valid but non existant comment_id', () => {
+      return request(app)
+      .delete('/api/comments/999')
+      .expect(404)
+      .then((res) => {
+        expect(res.body).toEqual({status: 404, msg: 'ID not found'});
+      })
+    })
+    test('DELETE - /api/comments/:comment_id - check it return error when presented a invalid comment_id', () => {
+      return request(app)
+      .delete('/api/comments/world')
       .expect(400)
       .then((res) => {
         expect(res.body).toEqual({ status: 400, msg: 'Bad request'});

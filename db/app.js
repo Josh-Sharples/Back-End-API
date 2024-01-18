@@ -7,8 +7,9 @@ const {
   getAllArticles, 
   getCommentsForArticleId,
   postCommentForArticleId,
-  patchArticleById
-} = require('./Controllers/topics.controller')
+  patchArticleById,
+  deleteComment
+} = require('./Controllers/controller')
 
 app.use(express.json())
 
@@ -26,7 +27,9 @@ app.get('/api/articles/:article_id/comments', getCommentsForArticleId);
 
 app.post('/api/articles/:article_id/comments', postCommentForArticleId);
 
-app.patch('/api/articles/:article_id', patchArticleById)
+app.patch('/api/articles/:article_id', patchArticleById);
+
+app.delete('/api/comments/:comment_id', deleteComment);
 
 
 //----------------Error Handling------------------------
@@ -44,7 +47,7 @@ app.use((err, req, res, next) => {
 
 app.use((err, req, res, next) => {
   if (err.status === 404 || err.code === '23503') {
-    res.status(404).send({status: 404, msg: 'Article ID not found'})
+    res.status(404).send({status: 404, msg : 'ID not found'})
   } else {
     next(err);
   }
