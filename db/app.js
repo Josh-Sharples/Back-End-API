@@ -49,8 +49,11 @@ app.use((err, req, res, next) => {
 })
 
 app.use((err, req, res, next) => {
-  if (err.status === 404 || err.code === '23503') {
+  if (err.status === 404) {
     res.status(404).send(err)
+  }
+  if (err.code === '23503') {
+    res.status(404).send({status: 404, msg: 'ID not found'})
   } else {
     next(err);
   }
