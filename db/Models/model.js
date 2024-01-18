@@ -12,25 +12,52 @@ exports.selectArticleById = (article_id) => {
     WHERE article_id = $1
   `, [article_id]).then(({rows}) => {
     if (rows.length === 0) {
-     return Promise.reject({status: 404, msg : 'Article ID not found'})
+     return Promise.reject({status: 404, msg : 'ID not found'})
     }
     return rows[0]
   })
 }
 
-exports.selectAllArticles = () => {
-  return db.query(`
+exports.selectAllArticles = (sort_by = 'created_at', asc_desc = 'DESC', topic) => {
+ 
+  const validSortQueries = ['created_at']
+  if(!validSortQueries.includes(sort_by)) {
+    return Promise.reject({status: 400, msg : 'Bad request'})
+  }
+
+  const validSortInOrderQueries = ['ASC', 'DESC']
+  if (!validSortInOrderQueries.includes(asc_desc)) {
+    return Promise.reject({ status: 400, msg: 'Bad request' }); 
+  }
+
+  let queryString = `
     SELECT articles.*, COUNT(comments.comment_id) AS comment_count
     FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id
-    GROUP BY articles.article_id
-    ORDER BY articles.created_at DESC;`)
-    .then(({ rows }) => {
-      rows.forEach(article => {
-        delete article.body;
-      });
-      return rows;
-    });
+    `
+
+  const queryParam = [];
+  if (topic) {
+    queryString += ` WHERE articles.topic = $1`
+    queryParam.push(topic)
+  }
+  
+  queryString += ' GROUP BY articles.article_id'
+
+  queryString += ` ORDER BY ${sort_by} ${asc_desc};`
+
+  return db.query(queryString, queryParam)
+    .then(({rows}) => {
+
+    rows.forEach((article) => {
+      delete article.body
+    })
+
+    if (rows.length === 0) {
+      return Promise.reject({status: 404, msg : 'Topic not found'})
+     }
+     return rows
+    })
 }
 
 exports.selectCommentsFromArticleId = (article_id) => {
@@ -51,6 +78,9 @@ exports.insertCommentForArticleId = (username, body, article_id) => {
     RETURNING *
   `, [username, body, article_id])
   .then(({rows}) => {
+    if (rows.length === 0) {
+      return Promise.reject({status: 404, msg : 'ID not found'})
+    }
     return rows[0]
   })
 }

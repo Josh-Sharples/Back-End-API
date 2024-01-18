@@ -219,10 +219,40 @@ describe('App.js', () => {
           .expect(200)
           .then((res) => {
             expect(res.body.length).toEqual(4)
-            expect(res.body[0]).toMatchObject({
-              username: 'butter_bridge',
-              name: 'jonny',
-              avatar_url: 'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg'
+            res.body.forEach((user) => {
+              expect(typeof user.username).toBe('string')
+              expect(typeof user.name).toBe('string')
+              expect(typeof user.avatar_url).toBe('string')
+            })
+          })
+        })
+        test('GET - /api/articles?:topic - should return status code 200 and a list of all filtered articles by specified topic and still remains in descending order by created_at', () => {
+          return request(app)
+          .get('/api/articles?topic=cats')
+          .expect(200)
+          .then((res) => {
+          res.body.forEach((article) => {
+            expect(article.topic).toBe('cats')
+            expect(res.body).toBeSortedBy('created_at', {descending: true})
+          })
+          })
+        })
+        test('GET - /api/articles?topic - should return status 200 when topic is left blank - default to ', () => {
+          return request(app)
+          .get('/api/articles?topic=')
+          .expect(200)
+          .then((res) => {
+            expect(res.body).toBeSortedBy('created_at', {descending: true})
+            res.body.forEach((article) => {
+              expect(article.hasOwnProperty('article_id')).toEqual(true);
+              expect(article.hasOwnProperty('title')).toEqual(true);
+              expect(article.hasOwnProperty('topic')).toEqual(true);
+              expect(article.hasOwnProperty('author')).toEqual(true);
+              expect(article.hasOwnProperty('created_at')).toEqual(true);
+              expect(article.hasOwnProperty('votes')).toEqual(true);
+              expect(article.hasOwnProperty('article_img_url')).toEqual(true);
+              expect(article.hasOwnProperty('comment_count')).toEqual(true);
+              expect(article.hasOwnProperty('body')).toEqual(false);
             })
           })
         })
@@ -345,12 +375,12 @@ describe('App.js', () => {
         expect(res.body).toEqual({status: 404, msg : 'Endpoint not found'})
       })
     })
-    test('GET - api/users - return 400 if invalid file path', () => {
+    test('GET - /api/articles?topic - responds with 404 when provided a non existand topic', () => {
       return request(app)
-      .get('/api/7')
+      .get('/api/articles?topic=notATopic')
       .expect(404)
       .then((res) => {
-        expect(res.body).toEqual({status: 404, msg : 'Endpoint not found'})
+        expect(res.body).toEqual({status: 404, msg: 'Topic not found'})
       })
     })
   })

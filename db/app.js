@@ -9,7 +9,7 @@ const {
   postCommentForArticleId,
   patchArticleById,
   deleteComment,
-  getAllUsers
+  getAllUsers,
 } = require('./Controllers/controller')
 
 app.use(express.json())
@@ -50,7 +50,7 @@ app.use((err, req, res, next) => {
 
 app.use((err, req, res, next) => {
   if (err.status === 404 || err.code === '23503') {
-    res.status(404).send({status: 404, msg : 'ID not found'})
+    res.status(404).send(err)
   } else {
     next(err);
   }
