@@ -99,5 +99,18 @@
   "DELETE /api/comments/:comment_id": {
     "description": "Deletes comment with specified ID - return 204 if sucessfully deleted",
     "queries": ["comment_id"]
+  },
+  "GET /api/users": {
+    "description": "Provides an array of all users and returns a 200 status code",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+      {
+        "username": "butter_bridge",
+        "name": "jonny",
+        "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+      }
+    ]
+    }
   }
 }

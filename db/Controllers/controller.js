@@ -5,7 +5,8 @@ const {
   selectCommentsFromArticleId,
   insertCommentForArticleId,
   updateArticleVotes,
-  deleteCommentById
+  deleteCommentById,
+  selectAllUsers
   } = require('../Models/model')
 const allEndpoints = require('../../endpoints.json')
 
@@ -78,6 +79,15 @@ exports.deleteComment = (req, res, next) => {
 
   deleteCommentById(comment_id).then((deletedComment) => {
     res.status(204).send()
+  })
+  .catch((err) => {
+    next(err)
+  })
+}
+
+exports.getAllUsers = (req, res, next) => {
+  selectAllUsers().then((users) => {
+    res.status(200).send(users)
   })
   .catch((err) => {
     next(err)

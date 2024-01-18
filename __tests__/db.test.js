@@ -213,6 +213,19 @@ describe('App.js', () => {
           .delete('/api/comments/1')
           .expect(204)
         })
+        test('GET - /api/users - responds with 200 & users array', () => {
+          return request(app)
+          .get('/api/users')
+          .expect(200)
+          .then((res) => {
+            expect(res.body.length).toEqual(4)
+            expect(res.body[0]).toMatchObject({
+              username: 'butter_bridge',
+              name: 'jonny',
+              avatar_url: 'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg'
+            })
+          })
+        })
   })
 
 
@@ -322,6 +335,22 @@ describe('App.js', () => {
       .expect(400)
       .then((res) => {
         expect(res.body).toEqual({ status: 400, msg: 'Bad request'});
+      })
+    })
+    test('GET - api/users - return 400 if invalid file path', () => {
+      return request(app)
+      .get('/api/user')
+      .expect(404)
+      .then((res) => {
+        expect(res.body).toEqual({status: 404, msg : 'Endpoint not found'})
+      })
+    })
+    test('GET - api/users - return 400 if invalid file path', () => {
+      return request(app)
+      .get('/api/7')
+      .expect(404)
+      .then((res) => {
+        expect(res.body).toEqual({status: 404, msg : 'Endpoint not found'})
       })
     })
   })
