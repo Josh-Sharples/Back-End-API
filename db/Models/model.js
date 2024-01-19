@@ -21,16 +21,16 @@ exports.selectArticleById = (article_id) => {
   })
 }
 
-exports.selectAllArticles = (sort_by = 'created_at', asc_desc = 'DESC', topic) => {
+exports.selectAllArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
  
-  const validSortQueries = ['created_at']
+  const validSortQueries = ['created_at', 'article_id', 'author', 'votes']
   if(!validSortQueries.includes(sort_by)) {
-    return Promise.reject({status: 400, msg : 'Bad request'})
+    return Promise.reject({status: 404, msg : 'Sort_by query not found'})
   }
 
   const validSortInOrderQueries = ['ASC', 'DESC']
-  if (!validSortInOrderQueries.includes(asc_desc)) {
-    return Promise.reject({ status: 400, msg: 'Bad request' }); 
+  if (!validSortInOrderQueries.includes(order)) {
+    return Promise.reject({ status: 404, msg: 'Order query not found' }); 
   }
 
   const validTopics = ['Mitch', 'cats', 'paper', '']
@@ -54,11 +54,10 @@ exports.selectAllArticles = (sort_by = 'created_at', asc_desc = 'DESC', topic) =
   
   queryString += ' GROUP BY articles.article_id'
 
-  queryString += ` ORDER BY ${sort_by} ${asc_desc};`
+  queryString += ` ORDER BY ${sort_by} ${order};`
 
   return db.query(queryString, queryParam)
     .then(({rows}) => {
-
      return rows
     })
 }
