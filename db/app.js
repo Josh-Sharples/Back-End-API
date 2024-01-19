@@ -1,4 +1,5 @@
 const express = require('express');
+const apiRouter = require('../Routers/api.router')
 const app = express();
 const { 
   getTopics, 
@@ -16,23 +17,7 @@ app.use(express.json())
 
 //------------------Requests------------------------
 
-app.get('/api/topics', getTopics);
-
-app.get('/api', getAllEndpoints);
-
-app.get('/api/articles/:article_id', getArticleById);
-
-app.get('/api/articles', getAllArticles);
-
-app.get('/api/articles/:article_id/comments', getCommentsForArticleId);
-
-app.post('/api/articles/:article_id/comments', postCommentForArticleId);
-
-app.patch('/api/articles/:article_id', patchArticleById);
-
-app.delete('/api/comments/:comment_id', deleteComment);
-
-app.get('/api/users', getAllUsers);
+app.use('/api', apiRouter)
 
 
 //----------------Error Handling------------------------

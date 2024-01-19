@@ -275,6 +275,24 @@ describe('App.js', () => {
             expect(res.body.article.comment_count).toEqual('11');
           })
         })
+        test('GET - /api/articles/:sort_by - checks if articles are sorted by specified sort_by query - Descending order', () => {
+          return request(app)
+          .get('/api/articles?sort_by=votes')
+          .expect(200)
+          .then((res) => {
+            expect(res.body.length).toEqual(13)
+            expect(res.body).toBeSortedBy('votes', {descending: true})
+          })
+        })
+        test('GET - /api/articles/:sort_by - checks if articles are sorted by specified sort_by query - Ascending order', () => {
+          return request(app)
+          .get('/api/articles?sort_by=author&order=ASC')
+          .expect(200)
+          .then((res) => {
+            expect(res.body.length).toEqual(13)
+            expect(res.body).toBeSortedBy('author')
+          })
+        })
   })
 
 
@@ -394,12 +412,28 @@ describe('App.js', () => {
         expect(res.body).toEqual({status: 404, msg : 'Endpoint not found'})
       })
     })
-    test('GET - /api/articles?topic - responds with 404 when provided a non existand topic', () => {
+    test('GET - /api/articles?topic - responds with 404 when provided a non existant topic', () => {
       return request(app)
       .get('/api/articles?topic=notATopic')
       .expect(404)
       .then((res) => {
         expect(res.body).toEqual({status: 404, msg: 'Topic not found'})
+      })
+    })
+    test('GET - /api/articles?sort_by - responds with 404 when provided an invalid sort_by query', () => {
+      return request(app)
+      .get('/api/articles?sort_by=notASortByQuery')
+      .expect(404)
+      .then((res) => {
+        expect(res.body).toEqual({status: 404, msg : 'Sort_by query not found'})
+      })
+    })
+    test('GET - /api/articles?sort_by - responds with 404 when provided an invalid sort_by query', () => {
+      return request(app)
+      .get('/api/articles?order=lowestFirst')
+      .expect(404)
+      .then((res) => {
+        expect(res.body).toEqual({ status: 404, msg: 'Order query not found' })
       })
     })
   })

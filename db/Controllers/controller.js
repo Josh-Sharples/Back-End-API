@@ -31,9 +31,9 @@ exports.getArticleById = (req, res, next) => {
 }
 
 exports.getAllArticles = (req, res, next) => {
-  const { sort_by, asc_desc, topic } = req.query;
+  const { sort_by, order, topic } = req.query;
   
-  selectAllArticles(sort_by, asc_desc, topic).then((articles) => {
+  selectAllArticles(sort_by, order, topic).then((articles) => {
     res.status(200).send(articles)
   }).catch((err) => {
     next(err)
