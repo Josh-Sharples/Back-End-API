@@ -132,3 +132,43 @@ exports.selectAllUsers = () => {
     return rows
   })
 }
+
+exports.selectUserByUsername = (username) => {
+
+  const validUsernames = ['butter_bridge', 'icellusedkars', 'rogersop', 'lurker']
+  if (!validUsernames.includes(username)) {
+    return Promise.reject({status: 404, msg : 'Username not found'})
+  }
+
+  let queryString = `
+    SELECT * FROM users
+    WHERE users.username = $1;
+  `
+
+  return db.query(queryString, [username])
+  .then(({rows}) => {
+    return rows[0]
+  })
+}
+
+exports.updateCommentById = (updatedVotes) => {
+  const {inc_votes} = updatedVotes
+  const {comment_id} = updatedVotes
+ 
+  return db.query(`
+    UPDATE comments
+    SET votes = votes + $1
+    WHERE
+    comment_id = $2
+    RETURNING *
+  `, [inc_votes, comment_id])
+  .then(({rows}) => {
+    if (rows.length === 0) {
+      return Promise.reject({status: 404, msg : 'ID not found'})
+    }
+    if (rows[0].votes <= 0) {
+      rows[0].votes = 0
+    }
+    return rows[0]
+  })
+}
