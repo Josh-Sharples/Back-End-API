@@ -293,6 +293,86 @@ describe('App.js', () => {
             expect(res.body).toBeSortedBy('author')
           })
         })
+        test('GET - /api/users/:username - checks it provides relevent user requested via username', () => {
+          return request(app)
+          .get('/api/users/butter_bridge')
+          .expect(200)
+          .then((res) => {
+            expect(typeof res.body.username).toBe('string');
+            expect(typeof res.body.name).toBe('string');
+            expect(typeof res.body.avatar_url).toBe('string');
+          })
+        })
+        test('PATCH - api/comments/:comment_id - responds with 200 & updated votes property', () => {
+          return request(app)
+          .patch('/api/comments/2')
+          .send({
+            inc_votes: 10
+          })
+          .expect(200)
+          .then((res) => {
+            expect(res.body).toMatchObject({
+            comment_id: 2,
+            body: "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+            votes: 24,
+            author: "butter_bridge",
+            article_id: 1,
+          })
+          })
+        })
+        test('PATCH - api/comments/:comment_id - responds with 200 & updated votes property (minus votes)', () => {
+          return request(app)
+          .patch('/api/comments/2')
+          .send({
+            inc_votes: -5
+          })
+          .expect(200)
+          .then((res) => {
+            expect(res.body).toMatchObject({
+            comment_id: 2,
+            body: "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+            votes: 9,
+            author: "butter_bridge",
+            article_id: 1,
+          })
+          })
+        })
+        test('PATCH - api/comments/:comment_id - responds with 200 & checks that votes will not go into negative', () => {
+          return request(app)
+          .patch('/api/comments/2')
+          .send({
+            inc_votes: -20
+          })
+          .expect(200)
+          .then((res) => {
+            expect(res.body).toMatchObject({
+            comment_id: 2,
+            body: "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+            votes: 0,
+            author: "butter_bridge",
+            article_id: 1,
+          })
+          })
+        })
+        test('PATCH - api/comments/:comment_id - responds with 200 & checks if extra properties are ignored and votes are still updated', () => {
+          return request(app)
+          .patch('/api/comments/2')
+          .send({
+            inc_votes: 10,
+            extraProperty: 'extraProperty'
+          })
+          .expect(200)
+          .then((res) => {
+            expect(res.body.hasOwnProperty('extraProperty')).toBe(false);
+            expect(res.body).toMatchObject({
+            comment_id: 2,
+            body: "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+            votes: 24,
+            author: "butter_bridge",
+            article_id: 1,
+          })
+          })
+        })
   })
 
 
@@ -434,6 +514,47 @@ describe('App.js', () => {
       .expect(404)
       .then((res) => {
         expect(res.body).toEqual({ status: 404, msg: 'Order query not found' })
+      })
+    })
+    test('GET - /api/users/:username - checks for valid but no user with the username input', () => {
+      return request(app)
+      .get('/api/users/Frank')
+      .expect(404)
+      .then((res) => {
+        expect(res.body).toEqual({status: 404, msg : 'Username not found'})
+      })
+    })
+    test('PATCH - api/comments/:comment_id - responds with 400 when proprty value is of another data type', () => {
+      return request(app)
+      .patch('/api/comments/1')
+      .send({
+        inc_votes: 'hello'
+      })
+      .expect(400)
+      .then((res) => {
+        expect(res.body).toEqual({ status: 400, msg: 'Bad request'});
+      })
+    })
+    test('PATCH - api/comments/:comment_id - responds with 400 when comment_id is an invalid data type', () => {
+      return request(app)
+      .patch('/api/comments/hello')
+      .send({
+        inc_votes: 15
+      })
+      .expect(400)
+      .then((res) => {
+        expect(res.body).toEqual({ status: 400, msg: 'Bad request'});
+      })
+    })
+    test('PATCH - api/comments/:comment_id - responds with 404 when comment_id is valid but not found', () => {
+      return request(app)
+      .patch('/api/comments/64')
+      .send({
+        inc_votes: 15
+      })
+      .expect(404)
+      .then((res) => {
+        expect(res.body).toEqual({ status: 404, msg: 'ID not found'});
       })
     })
   })

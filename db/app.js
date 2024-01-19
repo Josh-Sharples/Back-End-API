@@ -1,24 +1,12 @@
 const express = require('express');
 const apiRouter = require('../Routers/api.router')
 const app = express();
-const { 
-  getTopics, 
-  getAllEndpoints, 
-  getArticleById, 
-  getAllArticles, 
-  getCommentsForArticleId,
-  postCommentForArticleId,
-  patchArticleById,
-  deleteComment,
-  getAllUsers,
-} = require('./Controllers/controller')
 
 app.use(express.json())
 
 //------------------Requests------------------------
 
 app.use('/api', apiRouter)
-
 
 //----------------Error Handling------------------------
 app.all('*', (req, res) => {

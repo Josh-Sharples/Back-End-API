@@ -6,7 +6,9 @@ const {
   insertCommentForArticleId,
   updateArticleVotes,
   deleteCommentById,
-  selectAllUsers
+  selectAllUsers,
+  selectUserByUsername,
+  updateCommentById
   } = require('../Models/model')
 const allEndpoints = require('../../endpoints.json')
 
@@ -94,4 +96,28 @@ exports.getAllUsers = (req, res, next) => {
   .catch((err) => {
     next(err)
   })
+}
+
+exports.getUserByUsername = (req, res, next) => {
+const { username } = req.params
+
+selectUserByUsername(username).then((user) => {
+  res.status(200).send(user)
+})
+.catch((err) => {
+  next(err);
+})
+}
+
+exports.patchCommentById = (req, res, next) => {
+const { comment_id } = req.params;
+const newCommentVotes = req.body;
+newCommentVotes.comment_id = +comment_id
+
+updateCommentById(newCommentVotes).then((updatedVote) => {
+  res.status(200).send(updatedVote)
+})
+.catch((err) => {
+  next(err)
+})
 }
