@@ -1,6 +1,6 @@
 # WELCOME TO CODING NEWS! 📰 🗞
 
-<h1>Project Summary:</h1>
+<h2>Project Summary:</h2>
 
 This projet is a repesentative of a reddit-styled article platform. This project uses SQL queries to create databases that can be interacted with to store, amend, delete and insert data.
 The backend was built using; Node.js, Express.js, PostgreSQL and Test-Driven-Development using Jest & Supertest.
@@ -11,7 +11,7 @@ Here you will find all the available endpoints and queries that can be made agai
 
 -------------------------------------------------------------
 
-<h1>Set-up Instructions:</h1>
+<h2>Set-up Instructions:</h2>
 
 1. Fork & Clone the repo using
 ```
@@ -40,7 +40,7 @@ npm run test
 npm run seed
 ```
 -------------------------------------------------------------
-<h1>Environmant Variables:</h1>
+<h2>Environmant Variables:</h2>
 
 In order to run this API sucessfully, you would need to set up 2 .env. files & the required PGDATABASE's within the files.
 This enables you to successfully connect to the two databases locally:
@@ -54,7 +54,7 @@ Upon completion add these files to the .gitignore file along with the node_modul
 
 -------------------------------------------------------------
 
-Minimum requirements to run this project:
+<h2>Minimum requirements:</h2>
 
 Versions of dependencies:
 
