@@ -18,18 +18,27 @@ Here you will find all the available endpoints and queries that can be made agai
 git clone https://github.com/Josh-Sharples/Back-End-API.git
 ```
 
-3. You will need to install all the dependencies listed within the package.json file. This can be done using: npm install
+3. You will need to install all the dependencies listed within the package.json file. This can be done using:
+```
+npm install
+```
 
-4. See Environment Variables Section
+5. See Environment Variables Section
 
-5. Set-up these databases using npm run setup-dbs
+6. Set-up these databases using:
+```
+npm run setup-dbs
+```
 
-6. Run the test suite to ensure everything is set up correctly - using: npm run test
-   The test suite is pre seeded!
+8. Run the pre seeded test suite to ensure everything is set up correctly - using:
+```
+npm run test
+```
 
-7. If you wish to utilise the development database this would need seeding - using: npm run seed
-   Prior to running any tests.
-
+11. If you wish to utilise the development database this would need seeding, prior to running any tests - using:
+```
+npm run seed
+```
 -------------------------------------------------------------
 <h1>Environmant Variables:</h1>
 
