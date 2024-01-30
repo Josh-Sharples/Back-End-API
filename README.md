@@ -1,4 +1,4 @@
-# WELCOME TO CODING NEWS!
+# WELCOME TO CODING NEWS! 📰 🗞
 
 <h1>Project Summary:</h1>
 
@@ -13,18 +13,21 @@ Here you will find all the available endpoints and queries that can be made agai
 
 <h1>Set-up Instructions:</h1>
 
-1. Fork & Clone the repo using:  git clone https://github.com/Josh-Sharples/Back-End-API.git
+1. Fork & Clone the repo using
+```
+git clone https://github.com/Josh-Sharples/Back-End-API.git
+```
 
-2. You will need to install all the dependencies listed within the package.json file. This can be done using: npm install
+3. You will need to install all the dependencies listed within the package.json file. This can be done using: npm install
 
-3. See Environment Variables Section
+4. See Environment Variables Section
 
-4. Set-up these databases using npm run setup-dbs
+5. Set-up these databases using npm run setup-dbs
 
-5. Run the test suite to ensure everything is set up correctly - using: npm run test
+6. Run the test suite to ensure everything is set up correctly - using: npm run test
    The test suite is pre seeded!
 
-6. If you wish to utilise the development database this would need seeding - using: npm run seed
+7. If you wish to utilise the development database this would need seeding - using: npm run seed
    Prior to running any tests.
 
 -------------------------------------------------------------
