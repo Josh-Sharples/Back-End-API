@@ -8,7 +8,8 @@ const {
   deleteCommentById,
   selectAllUsers,
   selectUserByUsername,
-  updateCommentById
+  updateCommentById,
+  insertArticle
   } = require('../Models/model')
 const allEndpoints = require('../../endpoints.json')
 
@@ -33,9 +34,9 @@ exports.getArticleById = (req, res, next) => {
 }
 
 exports.getAllArticles = (req, res, next) => {
-  const { sort_by, order, topic } = req.query;
+  const { sort_by, order, topic, limit, page } = req.query;
   
-  selectAllArticles(sort_by, order, topic).then((articles) => {
+  selectAllArticles(sort_by, order, topic, limit, page).then((articles) => {
     res.status(200).send(articles)
   }).catch((err) => {
     next(err)
@@ -120,4 +121,16 @@ updateCommentById(newCommentVotes).then((updatedVote) => {
 .catch((err) => {
   next(err)
 })
+}
+
+exports.postArticle = (req, res, next) => {
+  const { author, title, body, topic } = req.body
+
+  insertArticle(author, title, body, topic)
+  .then((article) => {
+    res.status(201).send({ article })
+  })
+  .catch((err) => {
+    next(err)
+  })
 }

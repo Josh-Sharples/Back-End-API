@@ -21,7 +21,10 @@ exports.selectArticleById = (article_id) => {
   })
 }
 
-exports.selectAllArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
+exports.selectAllArticles = (sort_by = 'created_at', order = 'DESC', topic, limit = 10, page = 1) => {
+
+  const startIndex = (page - 1) * limit
+  const endIndex = page * limit
  
   const validSortQueries = ['created_at', 'article_id', 'author', 'votes']
   if(!validSortQueries.includes(sort_by)) {
@@ -56,9 +59,11 @@ exports.selectAllArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
 
   queryString += ` ORDER BY ${sort_by} ${order};`
 
+
   return db.query(queryString, queryParam)
     .then(({rows}) => {
-     return rows
+      const resultArticles = rows.slice(startIndex, endIndex)
+      return resultArticles
     })
 }
 
@@ -172,3 +177,25 @@ exports.updateCommentById = (updatedVotes) => {
     return rows[0]
   })
 }
+
+exports.insertArticle = (author, title, body, topic) => {
+  let newlyInsertedArticle;
+  return db.query(`
+    INSERT INTO articles (author, title, body, topic)
+    VALUES ($1, $2, $3, $4)
+    RETURNING *
+  `, [author, title, body, topic])
+  .then(({rows}) => {
+    newlyInsertedArticle = rows[0]
+    return db.query(`
+    SELECT COUNT(comments.comment_id) AS comment_count
+    FROM comments
+    WHERE article_id = $1
+    `, [newlyInsertedArticle.article_id]);
+  })
+  .then(({rows}) => {
+    newlyInsertedArticle.comment_count = +rows[0].comment_count
+    return newlyInsertedArticle
+  })
+}
+
