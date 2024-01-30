@@ -181,5 +181,47 @@
         "article_id": 1
       }
     }
+  },
+  "POST /api/articles": {
+    "description": "Posts a new article to the articles table.",
+    "exampleInput": {
+      "author": "butter_bridge",
+      "title": "Mitch and his love for SQL",
+      "body": "I will marry SQL",
+      "topic": "cats"
+    },
+    "exampleResponse": {
+      "article":
+      {
+        "article_id": 14,
+        "title": "Mitch and his love for SQL",
+        "topic": "cats",
+        "author": "butter_bridge",
+        "body": "I will marry SQL",
+        "created_at": "2024-01-21T22:18:41.746Z",
+        "votes": 0,
+        "article_img_url": "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
+        "comment_count": 0
+      }
+    }
+  },
+  "GET /api/articles?page=1&limit=10": {
+    "description": "serves an array of all articles - page number defaults to 1 and limit defaults to 10 if not specified",
+    "queries": ["author", "topic", "sort_by", "order"],
+    "exampleResponse": {
+      "articles": [
+        {
+          "article_id": 1,
+          "title": "Living in the shadow of a great man",
+          "topic": "mitch",
+          "author": "butter_bridge",
+          "body": "I find this existence challenging",
+          "created_at": 1594329060000,
+          "votes": 100,
+          "article_img_url":
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        }
+      ]
+    }
   }
 }

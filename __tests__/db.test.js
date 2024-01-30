@@ -56,7 +56,7 @@ describe('App.js', () => {
         .expect(200)
         .then((res) => {
           expect(res.body[0].comment_count).toEqual('2')
-          expect(res.body.length).toBe(13);
+          // expect(res.body.length).toBe(13);
           res.body.forEach((article) => {
             expect(article.hasOwnProperty('article_id')).toEqual(true);
             expect(article.hasOwnProperty('title')).toEqual(true);
@@ -280,7 +280,7 @@ describe('App.js', () => {
           .get('/api/articles?sort_by=votes')
           .expect(200)
           .then((res) => {
-            expect(res.body.length).toEqual(13)
+            // expect(res.body.length).toEqual(13)
             expect(res.body).toBeSortedBy('votes', {descending: true})
           })
         })
@@ -289,7 +289,7 @@ describe('App.js', () => {
           .get('/api/articles?sort_by=author&order=ASC')
           .expect(200)
           .then((res) => {
-            expect(res.body.length).toEqual(13)
+            // expect(res.body.length).toEqual(13)
             expect(res.body).toBeSortedBy('author')
           })
         })
@@ -372,6 +372,38 @@ describe('App.js', () => {
             article_id: 1,
           })
           })
+        })
+        test('POST - api/articles - responds with 201 and posts a new article', () => {
+          const articleToAdd = {
+            author: 'butter_bridge',
+            title: 'Mitch and his love for SQL',
+            body: 'I will marry SQL',
+            topic: 'cats',
+          };
+          return request(app)
+          .post('/api/articles')
+          .send(articleToAdd)
+          .expect(201)
+          .then((res) => {
+            expect(res.body.article.hasOwnProperty('article_img_url')).toBe(true);
+            expect(res.body.article.hasOwnProperty('votes')).toBe(true);
+            expect(res.body.article.hasOwnProperty('created_at')).toBe(true);
+            expect(res.body.article.hasOwnProperty('comment_count')).toBe(true);
+            expect(res.body.article).toMatchObject({
+            author: 'butter_bridge',
+            title: 'Mitch and his love for SQL',
+            body: 'I will marry SQL',
+            topic: 'cats',
+           })
+          })
+        })
+        test('PAGINATION - should return 10 articles by default', () => {
+            return request(app)
+            .get('/api/articles?page=1&limit=10')
+            .expect(200)
+            .then((res) => {
+              expect(res.body.length).toEqual(10);
+            })
         })
   })
 
