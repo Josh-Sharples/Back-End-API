@@ -18,24 +18,24 @@ Here you will find all the available endpoints and queries that can be made agai
 git clone https://github.com/Josh-Sharples/Back-End-API.git
 ```
 
-3. You will need to install all the dependencies listed within the package.json file. This can be done using:
+2. You will need to install all the dependencies listed within the package.json file. This can be done using:
 ```
 npm install
 ```
 
-5. See Environment Variables Section
+3. See Environment Variables Section
 
-6. Set-up these databases using:
+4. Set-up these databases using:
 ```
 npm run setup-dbs
 ```
 
-8. Run the pre seeded test suite to ensure everything is set up correctly - using:
+5. Run the pre seeded test suite to ensure everything is set up correctly - using:
 ```
 npm run test
 ```
 
-11. If you wish to utilise the development database this would need seeding, prior to running any tests - using:
+6. If you wish to utilise the development database this would need seeding, prior to running any tests - using:
 ```
 npm run seed
 ```
@@ -58,13 +58,13 @@ Upon completion add these files to the .gitignore file along with the node_modul
 
 Versions of dependencies:
 
-node: "v20.10.0"
-husky: "^8.0.2",
-jest: "^27.5.1",
-jest-extended: "^2.0.0",
-jest-sorted: "^1.0.14",
-pg-format: "^1.0.4"
-dotenv: "^16.0.0",
-express: "^4.18.2",
-pg: "^8.7.3",
-supertest: "^6.3.4"
+- node: "v20.10.0"
+- husky: "^8.0.2",
+- jest: "^27.5.1",
+- jest-extended: "^2.0.0",
+- jest-sorted: "^1.0.14",
+- pg-format: "^1.0.4"
+- dotenv: "^16.0.0",
+- express: "^4.18.2",
+- pg: "^8.7.3",
+- supertest: "^6.3.4"
