@@ -21,10 +21,7 @@ exports.selectArticleById = (article_id) => {
   })
 }
 
-exports.selectAllArticles = (sort_by = 'created_at', order = 'DESC', topic, limit = 10, page = 1) => {
-
-  const startIndex = (page - 1) * limit
-  const endIndex = page * limit
+exports.selectAllArticles = (sort_by = 'created_at', order = 'DESC', topic, limit = 10, p = 1) => {
  
   const validSortQueries = ['created_at', 'article_id', 'author', 'votes']
   if(!validSortQueries.includes(sort_by)) {
@@ -46,25 +43,31 @@ exports.selectAllArticles = (sort_by = 'created_at', order = 'DESC', topic, limi
     articles.author, articles.created_at, articles.votes, articles.article_img_url, 
     COUNT(comments.comment_id) AS comment_count
     FROM articles
-    LEFT JOIN comments ON articles.article_id = comments.article_id
-    `
+    LEFT JOIN comments ON articles.article_id = comments.article_id`
 
-  const queryParam = [];
+  const queryParams = [];
+
   if (topic) {
     queryString += ` WHERE articles.topic = $1`
-    queryParam.push(topic)
+    queryParams.push(topic)
   }
   
   queryString += ' GROUP BY articles.article_id'
 
-  queryString += ` ORDER BY ${sort_by} ${order};`
+  queryString += ` ORDER BY ${sort_by} ${order}`
 
+  const getArticlesCount = db.query(queryString, queryParams);
 
-  return db.query(queryString, queryParam)
-    .then(({rows}) => {
-      const resultArticles = rows.slice(startIndex, endIndex)
-      return resultArticles
-    })
+  queryString += ` LIMIT ${limit} OFFSET ${(p - 1) * limit}`;
+
+  const getArticles = db.query(queryString, queryParams);
+
+  return Promise.all([getArticlesCount, getArticles]).then((result) => {
+    const total_count = result[0].rowCount;
+    const articles = result[1].rows;
+    const updatedArticles = { articles, total_count };
+    return updatedArticles;
+  });
 }
 
 exports.selectCommentsFromArticleId = (article_id) => {

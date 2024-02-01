@@ -55,9 +55,9 @@ describe('App.js', () => {
         .get('/api/articles')
         .expect(200)
         .then((res) => {
-          expect(res.body[0].comment_count).toEqual('2')
-          // expect(res.body.length).toBe(13);
-          res.body.forEach((article) => {
+          expect(res.body.articles[0].comment_count).toEqual('2')
+          expect(res.body.articles.length).toBe(10);
+          res.body.articles.forEach((article) => {
             expect(article.hasOwnProperty('article_id')).toEqual(true);
             expect(article.hasOwnProperty('title')).toEqual(true);
             expect(article.hasOwnProperty('topic')).toEqual(true);
@@ -75,7 +75,7 @@ describe('App.js', () => {
         .get('/api/articles')
         .expect(200)
         .then((res) => {
-         expect(res.body).toBeSortedBy('created_at', {descending: true})
+         expect(res.body.articles).toBeSortedBy('created_at', {descending: true})
           })
       })
       test('api/articles/:article_id/comments - responds with status code 200 & all comments for relevant article_id with most recent comments first', () => {
@@ -232,10 +232,10 @@ describe('App.js', () => {
           .get('/api/articles?topic=cats')
           .expect(200)
           .then((res) => {
-          expect(res.body.length).toEqual(1)
-          res.body.forEach((article) => {
+          expect(res.body.articles.length).toEqual(1)
+          res.body.articles.forEach((article) => {
             expect(article.topic).toBe('cats')
-            expect(res.body).toBeSortedBy('created_at', {descending: true})
+            expect(res.body.articles).toBeSortedBy('created_at', {descending: true})
           })
           })
         })
@@ -244,8 +244,8 @@ describe('App.js', () => {
           .get('/api/articles?topic=')
           .expect(200)
           .then((res) => {
-            expect(res.body).toBeSortedBy('created_at', {descending: true})
-            res.body.forEach((article) => {
+            expect(res.body.articles).toBeSortedBy('created_at', {descending: true})
+            res.body.articles.forEach((article) => {
               expect(article.hasOwnProperty('article_id')).toEqual(true);
               expect(article.hasOwnProperty('title')).toEqual(true);
               expect(article.hasOwnProperty('topic')).toEqual(true);
@@ -263,7 +263,7 @@ describe('App.js', () => {
           .get('/api/articles?topic=paper')
           .expect(200)
           .then((res) => {
-            expect(res.body).toEqual([])
+            expect(res.body.articles).toEqual([])
           })
         })
         test('GET - /api/articles/:article_id - check if comment_count contains the total number of comments for specified article_id', () => {
@@ -280,8 +280,8 @@ describe('App.js', () => {
           .get('/api/articles?sort_by=votes')
           .expect(200)
           .then((res) => {
-            // expect(res.body.length).toEqual(13)
-            expect(res.body).toBeSortedBy('votes', {descending: true})
+            expect(res.body.articles.length).toEqual(10)
+            expect(res.body.articles).toBeSortedBy('votes', {descending: true})
           })
         })
         test('GET - /api/articles/:sort_by - checks if articles are sorted by specified sort_by query - Ascending order', () => {
@@ -289,8 +289,8 @@ describe('App.js', () => {
           .get('/api/articles?sort_by=author&order=ASC')
           .expect(200)
           .then((res) => {
-            // expect(res.body.length).toEqual(13)
-            expect(res.body).toBeSortedBy('author')
+            expect(res.body.articles.length).toEqual(10)
+            expect(res.body.articles).toBeSortedBy('author')
           })
         })
         test('GET - /api/users/:username - checks it provides relevent user requested via username', () => {
@@ -399,10 +399,11 @@ describe('App.js', () => {
         })
         test('PAGINATION - should return 10 articles by default', () => {
             return request(app)
-            .get('/api/articles?page=1&limit=10')
+            .get('/api/articles?limit=10&p=1')
             .expect(200)
             .then((res) => {
-              expect(res.body.length).toEqual(10);
+              expect(res.body.articles.length).toEqual(10);
+              expect(res.body.hasOwnProperty('total_count')).toBe(true);
             })
         })
   })
@@ -410,7 +411,7 @@ describe('App.js', () => {
 
   //----------------Error Handling------------------------
   describe('Error Handling', () => {
-    test('API erros testing for incorrect file path', () => {
+    test('GET - /api/noTable - API error testing for incorrect file path', () => {
       return request(app)
         .get('/api/noTable')
         .expect(404)
@@ -418,7 +419,7 @@ describe('App.js', () => {
           expect(res.body).toEqual({status: 404, msg : 'Endpoint not found'});
         }) 
     })
-    test('providing an invalid id - responds with a 404 and error message', () => {
+    test('GET - /api/articles/9999 - providing an invalid id - responds with a 404 and error message', () => {
       return request(app)
       .get('/api/articles/9999')
       .expect(404)
@@ -426,7 +427,7 @@ describe('App.js', () => {
         expect(res.body).toEqual({ status: 404, msg: 'ID not found'});
       })
     })
-    test('providing an invalid id - responds with a 400 when testing with a different data type', () => {
+    test('GET - /api/articles/hello - providing an invalid id - responds with a 400 when testing with a different data type', () => {
       return request(app)
       .get('/api/articles/hello')
       .expect(400)
@@ -434,7 +435,7 @@ describe('App.js', () => {
         expect(res.body).toEqual({ status: 400, msg: 'Bad request'});
       })
     })
-    test('not providing an id - responds with a 400', () => {
+    test('GET - /api/articles/comments - not providing an id - responds with a 400', () => {
       return request(app)
       .get('/api/articles/comments')
       .expect(400)
@@ -455,7 +456,7 @@ describe('App.js', () => {
         expect(res.body).toEqual({status: 404, msg: 'ID not found'});
       })
     })
-    test('providing an object to post with missing values', () => {
+    test('GET - /api/articles/:comment_id/comments - approviding an object to post with missing values', () => {
       const commentToAdd = {
         body: "I haven't posted in a while!"
       };
@@ -467,7 +468,7 @@ describe('App.js', () => {
         expect(res.body).toEqual({status: 400, msg : 'Bad request'});
       })
     })
-    test('PATCH - api/articles/:article_id - responds with 400 when proprty value is of another data type', () => {
+    test('PATCH - /api/articles/:article_id - responds with 400 when proprty value is of another data type', () => {
       return request(app)
       .patch('/api/articles/1')
       .send({
@@ -478,7 +479,7 @@ describe('App.js', () => {
         expect(res.body).toEqual({ status: 400, msg: 'Bad request'});
       })
     })
-    test('PATCH - api/articles/:article_id - responds with 400 when article_id is an invalid data type', () => {
+    test('PATCH - /api/articles/:article_id - responds with 400 when article_id is an invalid data type', () => {
       return request(app)
       .patch('/api/articles/hello')
       .send({
@@ -489,7 +490,7 @@ describe('App.js', () => {
         expect(res.body).toEqual({ status: 400, msg: 'Bad request'});
       })
     })
-    test('PATCH - api/articles/:article_id - responds with 404 when article_id is valid but not found', () => {
+    test('PATCH - /api/articles/:article_id - responds with 404 when article_id is valid but not found', () => {
       return request(app)
       .patch('/api/articles/74')
       .send({
@@ -516,7 +517,7 @@ describe('App.js', () => {
         expect(res.body).toEqual({ status: 400, msg: 'Bad request'});
       })
     })
-    test('GET - api/users - return 400 if invalid file path', () => {
+    test('GET - /api/users - return 400 if invalid file path', () => {
       return request(app)
       .get('/api/user')
       .expect(404)
@@ -556,7 +557,7 @@ describe('App.js', () => {
         expect(res.body).toEqual({status: 404, msg : 'Username not found'})
       })
     })
-    test('PATCH - api/comments/:comment_id - responds with 400 when proprty value is of another data type', () => {
+    test('PATCH - /api/comments/:comment_id - responds with 400 when proprty value is of another data type', () => {
       return request(app)
       .patch('/api/comments/1')
       .send({
@@ -567,7 +568,7 @@ describe('App.js', () => {
         expect(res.body).toEqual({ status: 400, msg: 'Bad request'});
       })
     })
-    test('PATCH - api/comments/:comment_id - responds with 400 when comment_id is an invalid data type', () => {
+    test('PATCH - /api/comments/:comment_id - responds with 400 when comment_id is an invalid data type', () => {
       return request(app)
       .patch('/api/comments/hello')
       .send({
@@ -578,7 +579,7 @@ describe('App.js', () => {
         expect(res.body).toEqual({ status: 400, msg: 'Bad request'});
       })
     })
-    test('PATCH - api/comments/:comment_id - responds with 404 when comment_id is valid but not found', () => {
+    test('PATCH - /api/comments/:comment_id - responds with 404 when comment_id is valid but not found', () => {
       return request(app)
       .patch('/api/comments/64')
       .send({

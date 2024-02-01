@@ -11,7 +11,7 @@
   },
   "GET /api/articles": {
     "description": "serves an array of all articles - default order set: descending by date of creation",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "queries": ["author", "topic", "sort_by", "order", "page", "limit"],
     "exampleResponse": {
       "articles": [
         {
@@ -203,25 +203,6 @@
         "article_img_url": "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
         "comment_count": 0
       }
-    }
-  },
-  "GET /api/articles?page=1&limit=10": {
-    "description": "serves an array of all articles - page number defaults to 1 and limit defaults to 10 if not specified",
-    "queries": ["author", "topic", "sort_by", "order"],
-    "exampleResponse": {
-      "articles": [
-        {
-          "article_id": 1,
-          "title": "Living in the shadow of a great man",
-          "topic": "mitch",
-          "author": "butter_bridge",
-          "body": "I find this existence challenging",
-          "created_at": 1594329060000,
-          "votes": 100,
-          "article_img_url":
-            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
-        }
-      ]
     }
   }
 }
