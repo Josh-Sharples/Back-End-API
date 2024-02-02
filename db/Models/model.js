@@ -38,6 +38,10 @@ exports.selectAllArticles = (sort_by = 'created_at', order = 'DESC', topic, limi
     return Promise.reject({status: 404, msg : 'Topic not found'});
   }
 
+  if(p <= 0) return Promise.reject({ status: 400, msg: 'p must be greater than 0'});
+  if(isNaN(p)) return Promise.reject({ status: 400, msg: 'p must be an integer'});
+  if(isNaN(limit)) return Promise.reject({ status: 400, msg: 'limit must be an integer'});
+
   let queryString = `
     SELECT articles.article_id, articles.title, articles.topic, 
     articles.author, articles.created_at, articles.votes, articles.article_img_url, 

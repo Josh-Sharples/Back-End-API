@@ -589,6 +589,30 @@ describe('App.js', () => {
       .then((res) => {
         expect(res.body).toEqual({ status: 404, msg: 'ID not found'});
       })
+    }),
+    test('GET - /api/articles?limit=10&p=0 - responds with a 400 when accessing page 0', () => {
+      return request(app)
+      .get('/api/articles?p=0')
+      .expect(400)
+      .then((res) => {
+        expect(res.body).toEqual({ status: 400, msg: 'p must be greater than 0'});
+      })
+    }),
+    test('GET - /api/articles?limit=hello', () => {
+      return request(app)
+      .get('/api/articles?limit=hello')
+      .expect(400)
+      .then((res) => {
+        expect(res.body).toEqual({ status: 400, msg: 'limit must be an integer'});
+      })
+    }),
+    test('GET - /api/articles?p=world - responds with a 400 when entering the incorrect data type', () => {
+      return request(app)
+      .get('/api/articles?p=world')
+      .expect(400)
+      .then((res) => {
+        expect(res.body).toEqual({ status: 400, msg: 'p must be an integer'});
+      })
     })
   })
 })
