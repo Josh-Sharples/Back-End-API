@@ -83,7 +83,7 @@ describe('App.js', () => {
           .get('/api/articles/1/comments')
           .expect(200)
           .then(({body}) => {
-            expect(body.length).toBe(11);
+            expect(body.length).toBe(10);
             expect(body[0]).toEqual({
               comment_id: 5,
               body: 'I hate streaming noses',
@@ -397,7 +397,7 @@ describe('App.js', () => {
            })
           })
         })
-        test('PAGINATION - should return 10 articles by default', () => {
+        test('PAGINATION - /api/articles - should return 10 articles by default', () => {
             return request(app)
             .get('/api/articles?limit=10&p=1')
             .expect(200)
@@ -405,7 +405,15 @@ describe('App.js', () => {
               expect(res.body.articles.length).toEqual(10);
               expect(res.body.hasOwnProperty('total_count')).toBe(true);
             })
-        })
+        }),
+        test('PAGINATION - /api/articles/:article_id/comments - should return 10 comments by default for specified article', () => {
+          return request(app)
+          .get('/api/articles/1/comments?limit=10&p=1')
+          .expect(200)
+          .then((res) => {
+            expect(res.body.length).toEqual(10);
+          })
+      })
   })
 
 
@@ -609,6 +617,46 @@ describe('App.js', () => {
     test('GET - /api/articles?p=world - responds with a 400 when entering the incorrect data type', () => {
       return request(app)
       .get('/api/articles?p=world')
+      .expect(400)
+      .then((res) => {
+        expect(res.body).toEqual({ status: 400, msg: 'p must be an integer'});
+      })
+    }),
+    test('GET - /api/articles?limit=-5 - responds with a 400 when attempting to enter a negative limit', () => {
+      return request(app)
+      .get('/api/articles?limit=-5')
+      .expect(400)
+      .then((res) => {
+        expect(res.body).toEqual({ status: 400, msg: 'limit must not be less than 0'});
+      })
+    })
+    test('GET - /api/articles/:article_id/comments?limit=-5 - responds with a 400 when attempting to enter a negative limit', () => {
+      return request(app)
+      .get('/api/articles/1/comments?limit=-5')
+      .expect(400)
+      .then((res) => {
+        expect(res.body).toEqual({ status: 400, msg: 'limit must not be less than 0'});
+      })
+    })
+    test('GET - /api/articles/:article_id/comments?p=0 - responds with a 400 when attempting to access page 0', () => {
+      return request(app)
+      .get('/api/articles/1/comments?p=0')
+      .expect(400)
+      .then((res) => {
+        expect(res.body).toEqual({ status: 400, msg: 'p must be greater than 0'});
+      })
+    })   
+    test('GET - /api/articles/:article_id/comments?limit=hello - responds with a 400 when entering the incorrect data type', () => {
+      return request(app)
+      .get('/api/articles/1/comments?limit=hello')
+      .expect(400)
+      .then((res) => {
+        expect(res.body).toEqual({ status: 400, msg: 'limit must be an integer'});
+      })
+    })
+    test('GET - /api/articles/:article_id/comments?p=world - responds with a 400 when entering the incorrect data type', () => {
+      return request(app)
+      .get('/api/articles/1/comments?p=world')
       .expect(400)
       .then((res) => {
         expect(res.body).toEqual({ status: 400, msg: 'p must be an integer'});

@@ -39,6 +39,7 @@ exports.selectAllArticles = (sort_by = 'created_at', order = 'DESC', topic, limi
   }
 
   if(p <= 0) return Promise.reject({ status: 400, msg: 'p must be greater than 0'});
+  if(limit <= 0) return Promise.reject({ status: 400, msg: 'limit must not be less than 0'});
   if(isNaN(p)) return Promise.reject({ status: 400, msg: 'p must be an integer'});
   if(isNaN(limit)) return Promise.reject({ status: 400, msg: 'limit must be an integer'});
 
@@ -74,12 +75,24 @@ exports.selectAllArticles = (sort_by = 'created_at', order = 'DESC', topic, limi
   });
 }
 
-exports.selectCommentsFromArticleId = (article_id) => {
-  return db.query(`
-    SELECT * FROM comments 
-    WHERE comments.article_id = $1
-    ORDER BY created_at DESC;
-    `, [article_id])
+exports.selectCommentsFromArticleId = (article_id, limit=10, p=1) => {
+  console.log(limit)
+
+  if(p <= 0) return Promise.reject({ status: 400, msg: 'p must be greater than 0'});
+  if(limit <= 0) return Promise.reject({ status: 400, msg: 'limit must not be less than 0'});
+  if(isNaN(p)) return Promise.reject({ status: 400, msg: 'p must be an integer'});
+  if(isNaN(limit)) return Promise.reject({ status: 400, msg: 'limit must be an integer'});
+  
+  const offset = (p - 1) * limit;
+
+  const queryString = `
+  SELECT * FROM comments 
+  WHERE comments.article_id = $1
+  ORDER BY created_at DESC
+  LIMIT $2 OFFSET $3
+  `
+
+  return db.query(queryString, [article_id, limit, offset])
     .then(({rows}) => {
       return rows
     })

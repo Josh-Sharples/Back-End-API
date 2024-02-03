@@ -10,8 +10,8 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all articles - default order set: descending by date of creation",
-    "queries": ["author", "topic", "sort_by", "order", "page", "limit"],
+    "description": "serves an array of all articles - default order set: descending by date of creation - pre-set p=1 & limit=10",
+    "queries": ["author", "topic", "sort_by", "order", "p", "limit"],
     "exampleResponse": {
       "articles": [
         {
@@ -44,8 +44,8 @@
     }
   },
   "GET /api/articles/:article_id/comments": {
-    "description": "serves an array of comments from specified article_id - default order set: most recent comment first",
-    "queries": ["article_id"],
+    "description": "serves an array of comments from specified article_id - default order set: most recent comment first - limit defaults to 10 & p defaults to 1",
+    "queries": ["article_id", "limit", "p"],
     "exampleResponse": {
       "comments": [
         {
