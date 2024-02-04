@@ -218,5 +218,9 @@
         "description": "Mitch and his love for SQL"
       }
     }
+  },
+  "DELETE /api/articles/:article_id": {
+    "description": "Deletes article with specified ID as well as associated comments to specified article - return 204 if sucessfully deleted",
+    "queries": ["article_id"]
   }
 }

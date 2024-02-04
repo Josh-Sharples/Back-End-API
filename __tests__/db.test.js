@@ -430,7 +430,12 @@ describe('App.js', () => {
             })
           })
         })
-      })
+        test('DELETE - /api/articles/:article_id - responds with 204 - deletes article using article_id', () => {
+          return request(app)
+          .delete('/api/articles/1')
+          .expect(204)
+        })
+    })
   })
 
 
@@ -701,6 +706,22 @@ describe('App.js', () => {
       .expect(400)
       .then((res) => {
         expect(res.body).toEqual({ status: 400, msg: 'slug & description must be of type string' })
+      })
+    })
+    test('DELETE - /api/articles/:article_id - check it return error when presented a valid but non existant article_id', () => {
+      return request(app)
+      .delete('/api/articles/999')
+      .expect(404)
+      .then((res) => {
+        expect(res.body).toEqual({status: 404, msg: 'ID not found'});
+      })
+    })
+    test('DELETE - /api/articles/:article_id - check it return error when presented a invalid article_id', () => {
+      return request(app)
+      .delete('/api/articles/world')
+      .expect(400)
+      .then((res) => {
+        expect(res.body).toEqual({ status: 400, msg: 'Bad request'});
       })
     })
 })

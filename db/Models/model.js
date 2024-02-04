@@ -236,4 +236,29 @@ exports.insertTopic = (slug, description) => {
   })
 }
 
+exports.deleteArticleById = (article_id) => {
+
+  const deleteCommentsByArticleId = (article_id) => {
+    return db.query(`
+      DELETE FROM comments
+      WHERE 
+      article_id = $1
+    `, [article_id])
+  }
+
+  return deleteCommentsByArticleId(article_id)
+  .then(() => {
+    return db.query(`
+      DELETE FROM articles
+      WHERE 
+      article_id = $1
+    `, [article_id])
+    .then((res) => {
+      if (res.rowCount === 0) {
+        return Promise.reject({status: 404, msg : 'ID not found'})
+       }
+    })
+  })
+};
+
 

@@ -10,7 +10,8 @@ const {
   selectUserByUsername,
   updateCommentById,
   insertArticle,
-  insertTopic
+  insertTopic,
+  deleteArticleById
   } = require('../Models/model')
 const allEndpoints = require('../../endpoints.json')
 
@@ -148,4 +149,15 @@ exports.postTopic = (req, res, next) => {
     .catch((err) => {
       next(err)
     })
+}
+
+exports.deleteArticle = (req, res, next) => {
+  const { article_id } = req.params
+
+  deleteArticleById(article_id).then((deletedArticle) => {
+    res.status(204).send()
+  })
+  .catch((err) => {
+    next(err)
+  })
 }
