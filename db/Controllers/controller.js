@@ -9,7 +9,8 @@ const {
   selectAllUsers,
   selectUserByUsername,
   updateCommentById,
-  insertArticle
+  insertArticle,
+  insertTopic
   } = require('../Models/model')
 const allEndpoints = require('../../endpoints.json')
 
@@ -135,4 +136,16 @@ exports.postArticle = (req, res, next) => {
   .catch((err) => {
     next(err)
   })
+}
+
+exports.postTopic = (req, res, next) => {
+    const { slug, description } = req.body
+
+    insertTopic(slug, description)
+    .then((topic) => {
+      res.status(201).send(topic)
+    })
+    .catch((err) => {
+      next(err)
+    })
 }

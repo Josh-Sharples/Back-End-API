@@ -413,6 +413,23 @@ describe('App.js', () => {
           .then((res) => {
             expect(res.body.length).toEqual(10);
           })
+        })
+        test('POST - /api/topics - posts a topic to topics list', () => {
+          const topicToAdd = {
+            slug: 'topic name',
+            description: 'description'
+          }
+          return request(app)
+          .post('/api/topics')
+          .send(topicToAdd)
+          .expect(201)
+          .then((res) => {
+            expect(res.body).toMatchObject({
+              slug: 'topic name',
+              description: 'description'
+            })
+          })
+        })
       })
   })
 
@@ -662,5 +679,28 @@ describe('App.js', () => {
         expect(res.body).toEqual({ status: 400, msg: 'p must be an integer'});
       })
     })
-  })
+    test('POST - /api/topics - returns error 400 when assigning a slug to anything other than a string', () => {
+      return request(app)
+      .post('/api/topics')
+      .send({
+        slug: 0,
+        description: 'description'
+      })
+      .expect(400)
+      .then((res) => {
+        expect(res.body).toEqual({ status: 400, msg: 'slug & description must be of type string' })
+      })
+    })
+    test('POST - /api/topics - returns error 400 when assigning a description to anything other than a string', () => {
+      return request(app)
+      .post('/api/topics')
+      .send({
+        slug: 'slug',
+        description: 0
+      })
+      .expect(400)
+      .then((res) => {
+        expect(res.body).toEqual({ status: 400, msg: 'slug & description must be of type string' })
+      })
+    })
 })

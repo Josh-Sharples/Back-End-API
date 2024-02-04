@@ -1,3 +1,4 @@
+const { promises } = require('supertest/lib/test');
 const db = require('../connection')
 
 exports.selectTopics = () => {
@@ -76,7 +77,6 @@ exports.selectAllArticles = (sort_by = 'created_at', order = 'DESC', topic, limi
 }
 
 exports.selectCommentsFromArticleId = (article_id, limit=10, p=1) => {
-  console.log(limit)
 
   if(p <= 0) return Promise.reject({ status: 400, msg: 'p must be greater than 0'});
   if(limit <= 0) return Promise.reject({ status: 400, msg: 'limit must not be less than 0'});
@@ -218,4 +218,22 @@ exports.insertArticle = (author, title, body, topic) => {
     return newlyInsertedArticle
   })
 }
+
+exports.insertTopic = (slug, description) => {
+  if (typeof slug !== 'string' || typeof description !== 'string') {
+    return Promise.reject({status: 400, msg: 'slug & description must be of type string'})
+  }
+
+  let newTopic;
+  return db.query(`
+    INSERT INTO topics
+    VALUES ($1, $2)
+    RETURNING *
+  `, [slug, description])
+  .then(({rows}) => {
+    newTopic = rows[0]
+    return newTopic
+  })
+}
+
 

@@ -204,5 +204,19 @@
         "comment_count": 0
       }
     }
+  },
+  "POST /api/topics": {
+    "description": "Posts a new topic to the topics table.",
+    "exampleInput": {
+      "slug": "butter_bridge",
+      "description": "Mitch and his love for SQL"
+    },
+    "exampleResponse": {
+      "topic":
+      {
+        "topic": "butter_bridge",
+        "description": "Mitch and his love for SQL"
+      }
+    }
   }
 }
