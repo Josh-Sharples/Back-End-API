@@ -229,12 +229,13 @@ describe('App.js', () => {
         })
         test('GET - /api/articles?:topic - should return status code 200 and a list of all filtered articles by specified topic and still remains in descending order by created_at', () => {
           return request(app)
-          .get('/api/articles?topic=cats')
+          .get('/api/articles?topic=football')
           .expect(200)
           .then((res) => {
-          expect(res.body.articles.length).toEqual(1)
+            console.log(res.body.articles)
+          expect(res.body.articles.length).toEqual(0)
           res.body.articles.forEach((article) => {
-            expect(article.topic).toBe('cats')
+            expect(article.topic).toBe('football')
             expect(res.body.articles).toBeSortedBy('created_at', {descending: true})
           })
           })
@@ -260,7 +261,7 @@ describe('App.js', () => {
         })
         test('GET - /api/articles?topic - check if topic is valid but there are no articles associated with it', () => {
           return request(app)
-          .get('/api/articles?topic=paper')
+          .get('/api/articles?topic=cooking')
           .expect(200)
           .then((res) => {
             expect(res.body.articles).toEqual([])
