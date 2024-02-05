@@ -34,7 +34,7 @@ exports.selectAllArticles = (sort_by = 'created_at', order = 'DESC', topic, limi
     return Promise.reject({ status: 404, msg: 'Order query not found' }); 
   }
 
-  const validTopics = ['Mitch', 'cats', 'paper', '']
+  const validTopics = ['cooking', 'coding', 'football', '']
   if(topic && !validTopics.includes(topic)) {
     return Promise.reject({status: 404, msg : 'Topic not found'});
   }
