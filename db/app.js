@@ -2,7 +2,10 @@ const express = require('express');
 const apiRouter = require('../Routers/api.router')
 const app = express();
 
+const cors = require('cors');
+
 app.use(express.json())
+app.use(cors());
 
 //------------------Requests------------------------
 
