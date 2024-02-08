@@ -113,10 +113,10 @@
     ]
     }
   },
-  "GET /api/articles/topic": {
+  "GET /api/articles?topic": {
     "description": "serves an array of all articles - where topic is equal to input topic - descending by date of creation",
     "queries": ["topic", "sort_by", "order"],
-    "example input": "/api/articles/Mitch",
+    "example input": "/api/articles?mitch",
     "exampleResponse": {
       "articles": [
         {
