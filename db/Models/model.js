@@ -24,7 +24,7 @@ exports.selectArticleById = (article_id) => {
 
 exports.selectAllArticles = (sort_by = 'created_at', order = 'DESC', topic, limit = 10, p = 1) => {
  
-  const validSortQueries = ['created_at', 'article_id', 'author', 'votes']
+  const validSortQueries = ['created_at', 'article_id', 'author', 'votes', 'comment_count']
   if(!validSortQueries.includes(sort_by)) {
     return Promise.reject({status: 404, msg : 'Sort_by query not found'})
   }
