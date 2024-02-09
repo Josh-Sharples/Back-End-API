@@ -1,4 +1,4 @@
-# WELCOME TO CODING NEWS! 📰 🗞
+# WELCOME TO CODING NEWS API! 📰 🗞
 
 <h2>Project Summary:</h2>
 
