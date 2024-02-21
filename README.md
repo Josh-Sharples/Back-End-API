@@ -2,7 +2,7 @@
 
 <h2>Project Summary:</h2>
 
-This projet is a repesentative of a reddit-styled article platform. This project uses SQL queries to create databases that can be interacted with to store, amend, delete and insert data.
+This project is a representation of a reddit-styled article platform. This project uses SQL queries to create databases that can be interacted with to store, amend, delete and insert data.
 The backend was built using; Node.js, Express.js, PostgreSQL and Test-Driven-Development using Jest & Supertest.
 
 You can access the hosted version on Render here: https://coding-news.onrender.com/api
@@ -40,9 +40,9 @@ npm run test
 npm run seed
 ```
 -------------------------------------------------------------
-<h2>Environmant Variables:</h2>
+<h2>Environment Variables:</h2>
 
-In order to run this API sucessfully, you would need to set up 2 .env. files & the required PGDATABASE's within the files.
+In order to run this API successfully, you would need to set up two '.env' files and the required 'PGDATABASE' entries within those files.
 This enables you to successfully connect to the two databases locally:
 
 1. .env.development -------------->  PGDATABASE=nc_news
@@ -50,7 +50,7 @@ This enables you to successfully connect to the two databases locally:
 
 These database names can also be found within db/setup.sql and are named accordingly.
 
-Upon completion add these files to the .gitignore file along with the node_modules.
+Upon completion, add these files to the '.gitignore' file along with the 'node_modules'.
 
 -------------------------------------------------------------
 
